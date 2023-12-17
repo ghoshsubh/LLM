@@ -39,7 +39,7 @@ Please go to this [website](https://ai.meta.com/llama/) and follow the process. 
 You need at least `one 80 GB gpu` to train whole `llamma2-7B` base model with the fine-tune data set. I use `one H-100 80GB` gpu.
 
 # Training
-The following code will utilize only `one gpu`. use_amp == 0 indicates `no mixed precision`. As all tensors operations take place in `torch.float16`, we do not need mixed precision concept. 
+The following code will utilize only `one gpu`. use_amp = 0 indicates `no mixed precision`. As all tensors operations take place in `torch.float16`, we do not need mixed precision concept. 
 ```
 torchrun --standalone --nproc_per_node=1 train.py --use_amp 0 --data no_robots
 
