@@ -264,8 +264,12 @@ def main(ags, train_data, val_data, file_final, log_file):
   
   loss_fn = loss_fnc()
 
+  if ags.use_amp == 0:
+    use_amp = False
+  else:
+    use_amp = True
 
-  trainer = Trainer(model, optimizer, train_data, val_data, loss_fn, save_path = file_final, log_file = log_file, ags = ags, use_amp = ags.use_amp)
+  trainer = Trainer(model, optimizer, train_data, val_data, loss_fn, save_path = file_final, log_file = log_file, ags = ags, use_amp = use_amp)
 
   trainer.train(ags.max_iter)   
     
