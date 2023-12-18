@@ -35,6 +35,18 @@ source activate LLM
 # Llamma 2 weights and tokenizer
 Please go to this [website](https://ai.meta.com/llama/) and follow the process. Please download only base models.
 
+# Memory requirements breakdown
+```
+Llamma-2 7B takes = 13.5 GB
+```
+We consider the batch size = 1 for the following calculation.
+
+**Forward pass:** The network has total 32 layers. The first layer needs around 0.844 GB and each layer of other 31 layers needs 0.760 GB.
+**Backward pass:** Each layer needs around 1 GB.
+```
+The minimum memory requirement = (13.5 + (1*0.844 + 31 * 0.760) + (32 * 1)) = 69.904 GB
+```
+
 # Requirements
 You need at least `one 80 GB gpu` to train whole `llamma2-7B` base model with the fine-tune data set. I use `one H-100 80GB` gpu.
 
