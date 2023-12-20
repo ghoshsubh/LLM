@@ -69,7 +69,7 @@ class GroupQueryAtention(nn.Module):
 
     self.wq = nn.Linear(args.embedding_size, args.n_heads * args.embedding_size // args.n_heads, bias = False, dtype = torch.float16); '(C, C)'
     self.wk = nn.Linear(args.embedding_size, self.n_kv_heads*args.embedding_size // args.n_heads, bias = False, dtype = torch.float16); '(C, C // num_kv_head) ---> (C, kv_head_dim)'
-    self.wv = nn.Linear(args.embedding_size, self.n_kv_heads*args.embedding_size // args.n_heads, bias = False, dtype = torch.float16); '(C, c // num_kv_head) ---> (C, kv_head_dim)'
+    self.wv = nn.Linear(args.embedding_size, self.n_kv_heads*args.embedding_size // args.n_heads, bias = False, dtype = torch.float16); '(C, C // num_kv_head) ---> (C, kv_head_dim)'
     self.wo = nn.Linear(args.embedding_size, args.n_heads * args.embedding_size // args.n_heads, bias = False, dtype = torch.float16); '(C, C)'
 
     """ kv_head_dim = n_kv_heads*args.embedding_size // args.n_heads
