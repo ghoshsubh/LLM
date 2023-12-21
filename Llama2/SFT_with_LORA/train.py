@@ -255,7 +255,7 @@ def main(ags, train_data, val_data, file_final, log_file):
   
   if ags.finetune:
     print(f'Loading the base model')
-    checkpoint_path = '/data/lab/doppa/Subhankar/Subhankar/Codes/LLM/LammaBase/AllBaseModels/llama-2-7b/consolidated.00.pth'
+    checkpoint_path = './AllBaseModels/llama-2-7b/consolidated.00.pth'
     checkpoint = torch.load(checkpoint_path, map_location = 'cpu')
 
     model.load_state_dict(checkpoint, strict = False)

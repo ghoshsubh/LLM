@@ -4,9 +4,9 @@ import sys
 import numpy as np
 
 
-tokenizer_path = '/data/lab/doppa/Subhankar/Subhankar/Codes/LLM/LammaBase/AllBaseModels/tokenizer.model'
+tokenizer_path = './AllBaseModels/tokenizer.model'
 
-sys.path.append('/data/lab/doppa/Subhankar/Subhankar/Codes/LLM/FineTuneLLM/')
+sys.path.append('./Codes/LLM/FineTuneLLM/')
 from tokenizer import Tokenizer
 
 tokenizer = Tokenizer(model_path=tokenizer_path)
