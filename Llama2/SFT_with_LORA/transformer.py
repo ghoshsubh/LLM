@@ -159,7 +159,7 @@ class Lora_Transformer(nn.Module):
   def __init__(self, args)->None:
     super().__init__()
     self.args = args
-    self.tok_embeddings = Lora_Embedding(args.vocab_size, args.dim, args.r, args.lora_alpha, args.lora_dropout, dtype = torch.float16)
+    self.tok_embeddings = Lora_Embedding(args.vocab_size, args.dim, args.r, args.lora_alpha, args.merge_weights, dtype = torch.float16)
     self.layers = nn.ModuleList()
 
     for i in range(args.n_layers):

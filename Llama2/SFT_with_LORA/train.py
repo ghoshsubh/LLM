@@ -62,8 +62,11 @@ class Trainer:
     self.save_path = save_path
     self.iters_run = 0
     
-    self.use_amp = use_amp
-
+    if use_amp == 1:
+      self.use_amp = True
+    else:
+      self.use_amp = False
+      
     self.log_file = log_file
     self.ags = ags
     
@@ -303,7 +306,8 @@ if __name__ == "__main__":
   ags.r = 2
   ags.lora_alpha = 2
   ags.lora_dropout = 0.1
-  
+  ags.merge_weights = True
+
   file_final, log_file, file_name = create_folder(ags)
   
   train_path = './data/train_sft-00000-of-00001-8aba5401a3b757f5.parquet'

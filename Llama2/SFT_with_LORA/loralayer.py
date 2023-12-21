@@ -48,13 +48,13 @@ class Lora_Embedding(nn.Embedding, LoraLayer):
     nn.Embedding.train(self, mode)
 
     if mode:
-      if self.merged_weights and self.merged:
+      if self.merge_weights and self.merged:
         if self.r > 0:
           self.weight.data -= (self.lora_B @ self.lora_A).transpose(0, 1) * self.scaling
         self.merged = False
 
     else:
-      if self.merged_weights and not self.merged:
+      if self.merge_weights and not self.merged:
         if self.r > 0:
           self.weight.data += (self.lora_B @ self.lora_A).transpose(0, 1) * self.scaling
         self.merged = True
