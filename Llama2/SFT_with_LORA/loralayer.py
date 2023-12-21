@@ -12,7 +12,7 @@ class LoraLayer():
     self.r = r
     self.lora_alpha = lora_alpha
     if lora_dropout > 0:
-      self.lora_dropout == nn.Dropout(p = lora_dropout)
+      self.lora_dropout = nn.Dropout(p = lora_dropout)
     else:
       self.lora_dropout = lambda x:x
 

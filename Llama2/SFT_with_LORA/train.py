@@ -300,7 +300,9 @@ if __name__ == "__main__":
   ags.batch_size = 1
   ags.max_seq_len = 2048
   ags.device = 'cpu'
-  
+  ags.r = 2
+  ags.lora_alpha = 2
+  ags.lora_dropout = 0.1
   
   file_final, log_file, file_name = create_folder(ags)
   
