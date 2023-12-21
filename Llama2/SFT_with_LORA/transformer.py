@@ -68,13 +68,11 @@ class GroupQueryAtention(nn.Module):
     self.args = args
     self.num_rep = args.n_heads // self.n_kv_heads
 
-    self.wq = Lora_Linear(args.embedding_size, args.n_heads * args.embedding_size // args.n_heads, args.r, args.lora_alpha, args.lora_dropout, bias = False, dtype = torch.float16); '(C, C)'
-    self.wk = Lora_Linear(args.embedding_size, self.n_kv_heads*args.embedding_size // args.n_heads, args.r, args.lora_alpha, args.lora_dropout, bias = False, dtype = torch.float16); '(C, C // num_kv_head) ---> (C, kv_head_dim)'
-    self.wv = Lora_Linear(args.embedding_size, self.n_kv_heads*args.embedding_size // args.n_heads, args.r, args.lora_alpha, args.lora_dropout, bias = False, dtype = torch.float16); '(C, c // num_kv_head) ---> (C, kv_head_dim)'
+    self.wq = Lora_Linear(args.embedding_size, args.n_heads * args.embedding_size // args.n_heads, args.r, args.lora_alpha, args.lora_dropout, bias = False, dtype = torch.float16); '(C, C) = (C, num_head * head_dim)'
+    self.wk = Lora_Linear(args.embedding_size, self.n_kv_heads*args.embedding_size // args.n_heads, args.r, args.lora_alpha, args.lora_dropout, bias = False, dtype = torch.float16); '(C, n_kv_head * head_dim)'
+    self.wv = Lora_Linear(args.embedding_size, self.n_kv_heads*args.embedding_size // args.n_heads, args.r, args.lora_alpha, args.lora_dropout, bias = False, dtype = torch.float16); '(C, n_kv_head * head_dim)'
     self.wo = Lora_Linear(args.embedding_size, args.n_heads * args.embedding_size // args.n_heads, args.r, args.lora_alpha, args.lora_dropout, bias = False, dtype = torch.float16); '(C, C)'
 
-    """ kv_head_dim = n_kv_heads*args.embedding_size // args.n_heads
-    """
 
   def forward(self, x:torch.tensor, angles:torch.tensor, mask = True)->torch.tensor:
     """ x is a matrix of size (B, T, C). B=batch size, T= time step or sequence length, C = embedding dimension. x[0, 0, :] is the size of
@@ -84,12 +82,12 @@ class GroupQueryAtention(nn.Module):
     B, T, C = x.shape
 
     qx = self.wq(x); '(B, T, C) @ (C, C) ----> (B, T, C) @ (B, C, C) ---> (B, T, C)'
-    kx = self.wk(x); '(B, T, C) @ (C, n_kv_heads) ----> (B, T, C) @ (B, C, kv_head_dim) ---> (B, T, kv_head_dim) or (B, T, C // num_head)'
-    vx = self.wv(x); '(B, T, C) @ (C, n_kv_heads) ----> (B, T, C) @ (B, C, kv_head_dim) ---> (B, T, kv_head_dim) or (B, T, C // num_head)'
+    kx = self.wk(x); '(B, T, C) @ (C,  n_kv_head * head_dim) ----> (B, T, C) @ (B, C,  n_kv_head * head_dim) ---> (B, T,  n_kv_head * head_dim)'
+    vx = self.wv(x); '(B, T, C) @ (C,  n_kv_head * head_dim) ----> (B, T, C) @ (B, C,  n_kv_head * head_dim) ---> (B, T,  n_kv_head * head_dim)'
 
-    qx = qx.view(B, T, self.args.n_heads, C //  self.args.n_heads); '(B, T, nh, C/nh)'
-    kx = kx.view(B, T, self.n_kv_heads, C //  self.args.n_heads); '(B, T, n_kv_heads, C/nh)'
-    vx = vx.view(B, T, self.n_kv_heads, C //  self.args.n_heads); '(B, T, n_kv_heads, C/nh)'
+    qx = qx.view(B, T, self.args.n_heads, C //  self.args.n_heads); '(B, T, nh, C/nh) = (B, T, nh, head_dim)'
+    kx = kx.view(B, T, self.n_kv_heads, C //  self.args.n_heads); '(B, T, n_kv_heads, C/nh) = (B, T,  n_kv_head, head_dim)'
+    vx = vx.view(B, T, self.n_kv_heads, C //  self.args.n_heads); '(B, T, n_kv_heads, C/nh) = (B, T,  n_kv_head, head_dim)'
 
     qx = apply_rotation(qx, angles); '(B, T, nh, C/nh)'
     kx = apply_rotation(kx, angles); '(B, T, n_kv_heads, C/nh)'
@@ -103,8 +101,7 @@ class GroupQueryAtention(nn.Module):
       kx = kx.repeat(1, self.num_rep, 1, 1); '(B, n_kv_heads, T, C/nh) ----> (B, nh, T, C/nh)'
       vx = vx.repeat(1, self.num_rep, 1, 1); '(B, n_kv_heads, T, C/nh) ----> (B, nh, T, C/nh)'
 
-    weight = kx @ qx.transpose(-1, -2); '(B, nh, T, C/nh) @ (B, nh, C/nh, T) ----> (B, nh, T, C/nh) @ (B, nh, C/nh, T) ---> (B, nh, T, T)'
-
+    weight = kx @ qx.transpose(-1, -2) * C**-0.5; '(B, nh, T, C/nh) @ (B, nh, C/nh, T) ----> (B, nh, T, C/nh) @ (B, nh, C/nh, T) ---> (B, nh, T, T)'
     if mask:
       mask = torch.full((T, T), float('-inf'), device = x.device).to(dtype = torch.float16)
       mask = torch.triu(mask, diagonal = 1)
