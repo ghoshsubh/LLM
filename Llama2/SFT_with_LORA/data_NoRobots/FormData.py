@@ -12,7 +12,7 @@ from tokenizer import Tokenizer
 tokenizer = Tokenizer(model_path=tokenizer_path)
 
 
-def form_data(file:str):
+def form_data_no_robots(file:str):
   data = pd.read_parquet(file)
   data = data['messages'].tolist()
   

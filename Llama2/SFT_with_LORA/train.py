@@ -308,7 +308,7 @@ if __name__ == "__main__":
 
   test_path = './data/test_sft-00000-of-00001-fe658ed8e3578d4a.parquet'
 
-  if ags.dataset == 'no_robots':
+  if ags.data == 'no_robots':
     train_data = form_data_no_robots(train_path)
     val_data = form_data_no_robots(test_path)
   else:
