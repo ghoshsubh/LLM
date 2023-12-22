@@ -46,7 +46,7 @@ As all computations take place in `torch.float16` that has low precision than `t
 
 # Results
 
-As I do not have much computation, I could train for the fine tuning data set till 2300 iterations. Please see the loss vs iterations curve. I will update it in the future.
+As I do not have much computation, I could train for the fine tuning data set till 2300 iterations. Please see the loss vs iterations curve. I will keep updating the figure the future.
 
 ![image](Results/losses_BS_1.png)
 
