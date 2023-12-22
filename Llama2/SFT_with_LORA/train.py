@@ -23,9 +23,9 @@ from utils import *
 
 old_stdout = sys.stdout
 
-log_file = open("./print_outputs.log","w")
+log_file1 = open("./print_outputs.log","w")
 
-sys.stdout = log_file
+sys.stdout = log_file1
 
 sys.path.append('./FineTuneLLM/data_NoRobots')
 from FormData import form_data_no_robots
@@ -240,8 +240,7 @@ def create_folder(ags):
   
 def load_train_objs(ModelArgs):
   model = Lora_Transformer(ModelArgs)
-  optimizer = torch.optim.AdamW(model.parameters(), lr=ags.lr, betas=(ags.beta1, ags.beta2))
-
+  optimizer = torch.optim.AdamW(model.parameters(), lr=ags.lr, betas=(ags.beta1, ags.beta2), eps = 1e-4)
   return model, optimizer
   
       
@@ -300,7 +299,6 @@ if __name__ == "__main__":
   ags.embedding_size = ags.dim
   ags.n_kv_heads = None
   ags.ffn_dim_multiplier = None
-  ags.batch_size = 1
   ags.max_seq_len = 2048
   ags.device = 'cpu'
   ags.r = 2
@@ -327,4 +325,4 @@ if __name__ == "__main__":
   
     
   sys.stdout = old_stdout
-  log_file.close()
+  log_file1.close()

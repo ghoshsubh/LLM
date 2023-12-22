@@ -101,7 +101,7 @@ class GroupQueryAtention(nn.Module):
       kx = kx.repeat(1, self.num_rep, 1, 1); '(B, n_kv_heads, T, C/nh) ----> (B, nh, T, C/nh)'
       vx = vx.repeat(1, self.num_rep, 1, 1); '(B, n_kv_heads, T, C/nh) ----> (B, nh, T, C/nh)'
 
-    weight = kx @ qx.transpose(-1, -2) * C**-0.5; '(B, nh, T, C/nh) @ (B, nh, C/nh, T) ----> (B, nh, T, C/nh) @ (B, nh, C/nh, T) ---> (B, nh, T, T)'
+    weight = kx @ qx.transpose(-1, -2) * C**-2; '(B, nh, T, C/nh) @ (B, nh, C/nh, T) ----> (B, nh, T, C/nh) @ (B, nh, C/nh, T) ---> (B, nh, T, T)'
     if mask:
       mask = torch.full((T, T), float('-inf'), device = x.device).to(dtype = torch.float16)
       mask = torch.triu(mask, diagonal = 1)
